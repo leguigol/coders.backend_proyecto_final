@@ -1,6 +1,8 @@
 const { Router }=require('express');
 const userModel =require('../dao/model/user.model');
 const productModel=require('../dao/model/products.model');
+const { createHash,isValidPasswd}=require('../utils/encrypt');
+const passport = require("passport");
 
 const router=Router();
 
@@ -9,11 +11,13 @@ router.post('/register',async(req,res)=>{
         console.log('Contenido del Body:',req.body);
         const {first_name,last_name,email,password,role='usuario'}=req.body;
 
+        const pswHashed=await createHash(password);
+
         const addUser={
             first_name,
             last_name,
             email,
-            password,
+            password: pswHashed,
             role,
         };
 
@@ -44,13 +48,17 @@ router.post ('/login',async(req,res)=>{
                 message: 'usuario no registrado',
             });
     
-            if(findUser.password!==password) return res.json({
-                message: 'Contraseña incorrecta',
-            })
+            const isValidComparedPsw=await isValidPasswd(password,findUser.password);
+            if(!isValidComparedPsw){
+                return res.json({ message: 'Contraseña incorrecta'});
+            }
+
+            // if(findUser.password!==password) return res.json({
+            //     message: 'Contraseña incorrecta',
+            // })
     
             req.session.user={
                 ...findUser,
-                password: null,
             };    
         }else{
             if(password!=='adminCod3r123') return res.json({
@@ -82,5 +90,31 @@ router.get('/logout',async(req,res)=>{
             return res.send({ message: 'problemas en el logout', body: err})
     });
 });
+
+router.get(
+    "/github",
+    passport.authenticate("github", { scope: ["user:email"] }),
+    async (req, res) => {}
+);
+
+router.get(
+    "/github/callback",
+    passport.authenticate("github", { failureRedirect: "/api/v1/views/register" }),
+    async (req, res) => {
+      try {
+        const newUserObject = {
+              _doc: {
+                email: req.user.email,
+                role: req.user.role,
+              }
+          };
+        // console.log('req..user;',newUserObject);
+        req.session.user = newUserObject;
+        return res.redirect('/api/v1/views/products');
+      } catch (error) {
+        console.log("🚀 ~ file: session.routes.js:115 ~ error:", error);
+      }
+    }
+);
 
 module.exports=router;

@@ -1,5 +1,7 @@
 // import { Router } from "express";
 const { Router } = require("express");
+const passport=require('passport');
+const AuthMdw=require('../middleware/auth.middleware');
 const path = require("path");
 
 const router = Router();
@@ -174,5 +176,24 @@ router.get('/login', async(req,res)=>{
   
 })
 
+router.post('/login',passport.authenticate('login',{failureRedirect: '/faillogin'}), async(req,res)=>{
+
+  res.render('login');
+  
+})
+
+router.get('/faillogin',async(req,res)=>{
+  res.send({error: 'login strategy failed'});
+})
+
+router.post('/register', passport.authenticate('register', {failureRedirect: '/failregister'}),async(req,res)=>{
+
+  res.render('register');
+  
+})
+
+router.get('/failregister',async(req,res)=>{
+  res.send({error: 'register strategy failed'});
+})
 
 module.exports= router;

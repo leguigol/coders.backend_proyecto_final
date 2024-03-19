@@ -5,10 +5,12 @@ const displayRoutes=require('express-routemap');
 const viewsRoutes=require('./routes/views.router');
 const productsRoutes=require('./routes/products.routes');
 const cartRoutes=require('./routes/carts.routes');
+const session=require("express-session");
+const passport=require("passport");
 const sessionRoutes=require('./routes/sessions.routes');
 const cookieParser=require('cookie-parser');
-const session=require("express-session");
 const mongoStore=require('connect-mongo');
+const initializePassport=require('./config/passport.config');
 
 const { mongoDBconnection } = require('./db/mongo.config');
 const { Server } = require("socket.io");
@@ -16,8 +18,6 @@ const path = require('path');
 
 const PORT=5000;
 //const DB_HOST='localhost';
-// const DB_HOST='mongodb+srv:';
-// url: `mongodb+srv://leguigol:Lancelot1014@cluster0.pz68o51.mongodb.net/`;
 const DB_PORT=27017
 const DB_NAME='ecommerce'
 
@@ -35,6 +35,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+
 app.use(
     session({
         store: mongoStore.create({
@@ -48,8 +49,10 @@ app.use(
     })
 );
 
-// const connection = mongoose.connect(`mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`)
-// const connection = mongoose.connect(`${DB_HOST}:${DB_PORT}/${DB_NAME}`)
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
+
 mongoDBconnection()
     .then((conn)=>{
         console.log('CONNECTION MONGO OK !')
@@ -59,8 +62,8 @@ mongoDBconnection()
     })
 
 
+
 app.engine("handlebars", handlebars.engine());
-// app.set("views", __dirname + "/views");
 app.set("views", viewsPath);
 app.set("view engine", "handlebars");
 
