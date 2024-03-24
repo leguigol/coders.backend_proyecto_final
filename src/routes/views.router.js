@@ -10,6 +10,8 @@ const ProductManager = require('../dao/managers/productManager');
 const productModel=require('../dao/model/products.model');
 const CartModel = require("../dao/model/cart.model");
 const mongoose=require('mongoose');
+const handlePolicies = require("../middleware/handle-policies.middleware");
+
 const ObjectId = mongoose.Types.ObjectId;
 
 // const pathBase = path.join(__dirname, '../productos.json');
@@ -30,7 +32,7 @@ router.get("/realtimeproducts", async(req, res) => {
   res.render("realTimeProducts", { productos: products.productos });
 });
 
-router.get("/products", async(req, res) => {
+router.get("/products",handlePolicies(["USER"]),async(req, res) => {
   try{
     const user=req.session.user;
     const { page = 1, limit=10 , campo, valor, sort }=req.query;

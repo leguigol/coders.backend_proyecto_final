@@ -2,15 +2,18 @@ const express=require('express')
 const handlebars=require('express-handlebars');
 const mongoose = require("mongoose");
 const displayRoutes=require('express-routemap');
-const viewsRoutes=require('./routes/views.router');
-const productsRoutes=require('./routes/products.routes');
-const cartRoutes=require('./routes/carts.routes');
 const session=require("express-session");
 const passport=require("passport");
-const sessionRoutes=require('./routes/sessions.routes');
 const cookieParser=require('cookie-parser');
 const mongoStore=require('connect-mongo');
 const initializePassport=require('./config/passport.config');
+
+const viewsRoutes=require('./routes/views.router');
+const sessionRoutes=require('./routes/sessions.routes');
+const productsRoutes=require('./routes/products.routes');
+const cartRoutes=require('./routes/carts.routes');
+const authRoutes=require('./routes/auth.routes');
+const cookiesRoutes=require('./routes/cookies.routes');
 
 const { mongoDBconnection } = require('./db/mongo.config');
 const { Server } = require("socket.io");
@@ -74,6 +77,9 @@ app.use(`/${API_PREFIX}/${API_VERSION}/views`, viewsRoutes);
 app.use(`/${API_PREFIX}/${API_VERSION}/cart`, cartRoutes);
 app.use(`/${API_PREFIX}/${API_VERSION}/products`, productsRoutes);
 app.use(`/${API_PREFIX}/${API_VERSION}/sessions`, sessionRoutes);
+app.use(`/${API_PREFIX}/${API_VERSION}/auth`, authRoutes);
+app.use(`/${API_PREFIX}/${API_VERSION}/cookies`, cookiesRoutes);
+
 
 app.listen(PORT, () => {
     displayRoutes(app);

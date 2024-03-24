@@ -4,6 +4,9 @@ const cartModel=require('../dao/model/cart.model');
 const CartManager=require('../dao/managers/cartManager');
 const router=Router();
 const mongoose=require('mongoose');
+const handlePolicies = require('../middleware/handle-policies.middleware');
+
+
 const ObjectId = mongoose.Types.ObjectId;
 
     // cartManager=new CartManager();
@@ -24,7 +27,7 @@ const ObjectId = mongoose.Types.ObjectId;
             }
         });
 
-        router.delete('/carts/:cid/products/:pid', async (req, res) => {
+        router.delete('/carts/:cid/products/:pid',handlePolicies(["USER"]), async (req, res) => {
             try {
                 const cartId = new ObjectId(req.params.cid);
                 const productId = req.params.pid;
@@ -59,7 +62,7 @@ const ObjectId = mongoose.Types.ObjectId;
             }
         });
 
-        router.get('/', async (req, res) => {
+        router.get('/',handlePolicies(["USER"]), async (req, res) => {
             try {
                 const Cart = await cartModel.find();
                 
@@ -77,7 +80,7 @@ const ObjectId = mongoose.Types.ObjectId;
             }
         });
 
-        router.put('/carts/:cid', async (req, res) => {
+        router.put('/carts/:cid',handlePolicies(["USER"]), async (req, res) => {
             try {
                 const cartId = req.params.cid;
                 const { productos } = req.body;
@@ -109,7 +112,7 @@ const ObjectId = mongoose.Types.ObjectId;
             }
         });
 
-        router.put('/carts/:cid/products/:pid', async (req, res) => {
+        router.put('/carts/:cid/products/:pid',handlePolicies(["USER"]), async (req, res) => {
             try {
                 const cartId = req.params.cid;
                 const productId = req.params.pid;
@@ -154,7 +157,7 @@ const ObjectId = mongoose.Types.ObjectId;
             }
         });
 
-        router.delete('/carts/:cid', async (req, res) => {
+        router.delete('/carts/:cid',handlePolicies(["USER"]), async (req, res) => {
             try {
                 const cartId = req.params.cid;
         
@@ -186,7 +189,7 @@ const ObjectId = mongoose.Types.ObjectId;
             }
         });
         
-        router.get('/vercarrito/:cid',async(req,res)=>{
+        router.get('/vercarrito/:cid',handlePolicies(["USER"]),async(req,res)=>{
             try {
                 const cartId=req.params.cid;
 

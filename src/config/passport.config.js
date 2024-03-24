@@ -3,11 +3,24 @@ const GithubStrategy=require('passport-github2');
 const local=require('passport-local');
 const userModel=require('../dao/model/user.model');
 const { createHash,isValidPasswd } = require('../utils/encrypt');
+const jwt = require("passport-jwt");
+const { SECRET_JWT } = require("../utils/jwt");
 
 const localStrategy=local.Strategy
+const JWTStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt;
 
 const GITHUB_CLIENT_ID="f31926cb4d1ef0a2c3f0";
 const GITHUB_CLIENT_SECRET="71955eb278373c2a5859a551985b0133acc31797";
+
+   
+const cookieExtractor = function(req) {
+    let token = null;
+    if (req && req.cookies) {
+        token = req.cookies['jwt'];
+    }
+    return token;
+};
 
 const initializePassport=()=>{
 
@@ -117,6 +130,50 @@ const initializePassport=()=>{
             }
         })
     )
+
+    passport.use(
+        "jwt",
+        new JWTStrategy(
+          {
+            jwtFromRequest: cookieExtractor, // extrae del header Authorization: Bearer atokenaskjehbdkajdhkahdka
+            secretOrKey: SECRET_JWT,
+          },
+          async (jwtPayload, done) => {
+            console.log(
+              "🚀 ~ file: passport.config.js:19 ~ jwtPayload:",
+              jwtPayload
+            );
+            try {
+              return done(null, jwtPayload);
+            } catch (error) {
+              return done(error);
+            }
+          }
+        )
+    );
+
+    
+    passport.use(
+        "current",
+        new JWTStrategy(
+            {
+                jwtFromRequest: cookieExtractor,
+                secretOrKey: SECRET_JWT,
+            },
+            async (jwtPayload, done) => {
+                try {
+                    const user = await userModel.findById(jwtPayload.sub);
+                    if (!user) {
+                        return done(null, false, { message: 'User not found' });
+                    }
+                    console.log('entre al current, user:',user);
+                    return done(null, user);
+                } catch (error) {
+                    return done(error);
+                }
+            }
+        )
+    );
 
     passport.serializeUser((user,done)=>{
         done(null,user._id)

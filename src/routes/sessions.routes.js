@@ -83,12 +83,17 @@ router.post ('/login',async(req,res)=>{
     }
 })
 
-router.get('/logout',async(req,res)=>{
+// router.get('/logout',async(req,res)=>{
     
-    req.session.destroy((err)=>{
-        if(!err) return res.redirect("/api/v1/views/login");
-            return res.send({ message: 'problemas en el logout', body: err})
-    });
+//     req.session.destroy((err)=>{
+//         if(!err) return res.redirect("/api/v1/views/login");
+//             return res.send({ message: 'problemas en el logout', body: err})
+//     });
+// });
+
+router.get('/logout', (req, res) => {
+    res.clearCookie('jwt');    
+    res.redirect("/api/v1/views/login");
 });
 
 router.get(

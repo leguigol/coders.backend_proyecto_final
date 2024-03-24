@@ -2,6 +2,8 @@ const {Router}=require('express');
 const productsData=require('../init-data/products.data');
 const productModel=require('../dao/model/products.model');
 const productManager=require('../dao/managers/productManager');
+const handlePolicies = require('../middleware/handle-policies.middleware');
+
 const router=Router();
 
     // productManager=new ProductManager();
@@ -19,7 +21,7 @@ const router=Router();
     })
 
         //retorna todos los productos
-        router.get(`/`,async(req,res)=>{
+        router.get(`/`,handlePolicies(["USER"]),async(req,res)=>{
             try{
                 const { page = 1, limit=10 , query, sort }=req.query;
                 
@@ -55,7 +57,7 @@ const router=Router();
             }
         })
         //filtra por categoria y ordena
-        router.get('/cate',async(req,res)=>{
+        router.get('/cate',handlePolicies(["USER"]),async(req,res)=>{
             try{
                 const { campo, valor, sort }=req.query;
                 
@@ -84,7 +86,7 @@ const router=Router();
         })
 
         //retorna un producto por id
-        router.get(`/:pid`,async(req,res)=>{
+        router.get(`/:pid`,handlePolicies(["USER"]),async(req,res)=>{
             try{
                 const productId=req.params.pid;
                 // const product=this.productManager.getProductById(productId);
@@ -107,7 +109,7 @@ const router=Router();
             }
         })
         // agrego producto
-        router.post('/',async(req,res)=>{
+        router.post('/',handlePolicies(["USER"]),async(req,res)=>{
             try{
                 const productBody=req.body;
 

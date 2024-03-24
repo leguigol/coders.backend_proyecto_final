@@ -1,58 +1,16 @@
-{{!-- <div>
-    <h1>Registro</h1>
-
-    <div>
-        <form action="/api/v1/sessions/register" method="post">
-            <label for="nombre">Nombre del Usuario</label>
-            <input 
-                type="text"
-                name="nombre"
-                id="nombre"
-                placeholder="introduzca su nombre"
-                required
-            /><br />
-            <label for="apellido">Apellido</label>
-            <input 
-                type="text"
-                name="apellido"
-                id="apellido"
-                placeholder="introduzca su apellido"
-                required
-            /><br />
-            <label for="email">Email</label>
-            <input 
-                type="email"
-                name="email"
-                id="email"
-                placeholder="introduzca su email"
-                required
-            /><br />
-            <label for="password">Password</label>
-            <input 
-                type="password"
-                name="password"
-                id="password"
-                placeholder="introduzca su password"
-                required
-            /><br />
-            <button type="submit">Enviar</button>
-        </form>
-    </div>
-</div> --}}
-
 <div class="container mt-5">
     <div class="text-center">
         <h1 class="display-4">Registro</h1>
     </div>
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <form action="/api/v1/sessions/register" method="post">
+            <form action="/api/v1/auth/register" method="post">
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre del Usuario</label>
                     <input 
                         type="text"
-                        name="nombre"
-                        id="nombre"
+                        name="first_name"
+                        id="first_name"
                         class="form-control"
                         placeholder="Introduzca su nombre"
                         required
@@ -63,10 +21,22 @@
                     <label for="apellido" class="form-label">Apellido</label>
                     <input 
                         type="text"
-                        name="apellido"
-                        id="apellido"
+                        name="last_name"
+                        id="last_name"
                         class="form-control"
                         placeholder="Introduzca su apellido"
+                        required
+                    />
+                </div>
+
+                <div class="mb-3">
+                    <label for="edad" class="form-label">Edad</label>
+                    <input 
+                        type="number"
+                        name="age"
+                        id="age"
+                        class="form-control"
+                        placeholder="Introduzca su edad"
                         required
                     />
                 </div>
