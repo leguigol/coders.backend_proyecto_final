@@ -2,15 +2,15 @@ const cartsData=[
     {
         "productos": [
             {
-                "producto": '65e47a1e0553fafd63fad3eb',
+                "producto": '65ea2f76ec09682d307878ed',
                 "quantity": 1
             },
             {
-                "producto": '65e47a1e0553fafd63fad3ec',
+                "producto": '65ea2f76ec09682d307878f5',
                 "quantity": 2
             },
             {
-                "producto": '65e47a1e0553fafd63fad3f2',
+                "producto": '65ea2f76ec09682d307878f6',
                 "quantity": 8
             },
 

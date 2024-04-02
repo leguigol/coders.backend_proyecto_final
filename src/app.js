@@ -73,9 +73,9 @@ app.set("view engine", "handlebars");
 app.use(`/static`, express.static(__dirname + "/public"));
 // this.app.use('/public', express.static(path.join(__dirname, '../public')));
 
+app.use(`/${API_PREFIX}/${API_VERSION}/products`, productsRoutes);
 app.use(`/${API_PREFIX}/${API_VERSION}/views`, viewsRoutes);
 app.use(`/${API_PREFIX}/${API_VERSION}/cart`, cartRoutes);
-app.use(`/${API_PREFIX}/${API_VERSION}/products`, productsRoutes);
 app.use(`/${API_PREFIX}/${API_VERSION}/sessions`, sessionRoutes);
 app.use(`/${API_PREFIX}/${API_VERSION}/auth`, authRoutes);
 app.use(`/${API_PREFIX}/${API_VERSION}/cookies`, cookiesRoutes);

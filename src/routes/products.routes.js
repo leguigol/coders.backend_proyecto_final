@@ -3,6 +3,7 @@ const productsData=require('../init-data/products.data');
 const productModel=require('../dao/model/products.model');
 const productManager=require('../dao/managers/productManager');
 const handlePolicies = require('../middleware/handle-policies.middleware');
+const productCtrl=require('../services/product.services');
 
 const router=Router();
 
@@ -20,42 +21,45 @@ const router=Router();
         }
     })
 
-        //retorna todos los productos
-        router.get(`/`,handlePolicies(["USER"]),async(req,res)=>{
-            try{
-                const { page = 1, limit=10 , query, sort }=req.query;
-                
-                const {
-                    docs,
-                    totalDocs,
-                    limit: limitPag,
-                    totalPages,
-                    hasPrevPage,
-                    hasNextPage,
-                    nextPage,
-                    prevPage
-                }=await productModel.paginate({},{ page, limit, lean:true });
-                
-                return res.status(200).json({
-                    status: true,
-                    message: `getAllProducts`,
-                    payload: docs,
-                    limit: limit,
-                    page: parseInt(page),
-                    total: totalDocs,
-                    totalPages: totalPages,
-                    hasPrevPage: hasPrevPage,
-                    hasNextPage: hasNextPage,
-                    nextPage: nextPage,
-                    prevPage: prevPage,
-                    prevLink: hasPrevPage ? `/products?page=${prevPage}` : null,
-                    nextLink: hasNextPage ? `/products?page=${nextPage}` : null,
-                });
+    // router.get('/',handlePolicies(["USER"]),productCtrl.getAllProducts);
+    router.get('/',handlePolicies(["USER"]),productCtrl.getAllProducts);
 
-            }catch(error){
-                console.log(error);
-            }
-        })
+    //retorna todos los productos
+    router.get(`/`,handlePolicies(["USER"]),async(req,res)=>{
+        try{
+            const { page = 1, limit=10 , query, sort }=req.query;
+            
+            const {
+                docs,
+                totalDocs,
+                limit: limitPag,
+                totalPages,
+                hasPrevPage,
+                hasNextPage,
+                nextPage,
+                prevPage
+            }=await productModel.paginate({},{ page, limit, lean:true });
+            
+            return res.status(200).json({
+                status: true,
+                message: `getAllProducts`,
+                payload: docs,
+                limit: limit,
+                page: parseInt(page),
+                total: totalDocs,
+                totalPages: totalPages,
+                hasPrevPage: hasPrevPage,
+                hasNextPage: hasNextPage,
+                nextPage: nextPage,
+                prevPage: prevPage,
+                prevLink: hasPrevPage ? `/products?page=${prevPage}` : null,
+                nextLink: hasNextPage ? `/products?page=${nextPage}` : null,
+            });
+
+        }catch(error){
+            console.log(error);
+        }
+    })
         //filtra por categoria y ordena
         router.get('/cate',handlePolicies(["USER"]),async(req,res)=>{
             try{
