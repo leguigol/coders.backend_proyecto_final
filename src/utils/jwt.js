@@ -1,4 +1,5 @@
-const jwt=require('jsonwebtoken');
+// const jwt=require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 const SECRET_JWT = "CLAVE_pochipola"; // A futuro esto debe ir por variable de entorno
 
@@ -13,7 +14,7 @@ const generateJWT=(user)=>{
         })
     })
 }
-module.exports={
+export {
     SECRET_JWT,
     generateJWT,
 }

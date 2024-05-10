@@ -1,4 +1,6 @@
-const mongoose=require('mongoose');
+// const mongoose=require('mongoose');
+
+import mongoose from 'mongoose';
 
 const DB_HOST='localhost'
 const DB_PORT=27017
@@ -14,7 +16,7 @@ const configConnection={
     },
 };
 
-const mongoDBconnection=async()=>{
+export const mongoDBconnection=async()=>{
     try{
         await mongoose.connect(configConnection.url,configConnection.options);
         console.log('=============================');
@@ -28,7 +30,6 @@ const mongoDBconnection=async()=>{
     }
 }
 
-module.exports={
+export {
     configConnection,
-    mongoDBconnection,
 }

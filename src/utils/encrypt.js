@@ -1,4 +1,5 @@
-const bcrypt=require('bcrypt');
+// const bcrypt=require('bcrypt');
+import bcrypt from 'bcrypt';
 
 const createHash=async(psw)=>{
 
@@ -14,7 +15,7 @@ const isValidPasswd=async(psw,encryptedPsw)=>{
 
 }
 
-module.exports={
+export {
     createHash,
     isValidPasswd,
 }

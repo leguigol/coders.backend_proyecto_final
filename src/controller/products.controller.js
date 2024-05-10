@@ -1,128 +1,76 @@
-const productService=require('../services/product.services');
-const mongoose=require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
+// import Products from "../dao/factory.js";
+// import ProductServiceDao from "../dao/product.service.js";
+// import ProductMemServiceDao from "../dao/product-mem.service.js";
+import {Products} from "../dao/factory.js";
+import { ProductService } from "../repository/index.js";
+import ProductDTO from "../dto/product.dto.js";
 
-const getAllProducts=async(req,res)=>{
-    const productsList=await productService.getAllProducts();
+export default class ProductCtrl {
+  productService;
+  constructor() {
+    // this.productService = new ProductMemServiceDao();
+    // this.productService = new ProductServiceDao();
+    this.productService = ProductService;
+  }
 
-    return res.json({
-        message: 'getAllProducts',
-        products: productsList,
-    })
-}
-
-const getAllProductsView=async(req,res)=>{
-    try{
-        const productsList=await productService.getAllProducts();
-        console.log('pase por la vista');
-        return res.render("home", {products: productsList} );    
-    } catch (error) {
-        console.error(error);
-        return res.status(500).send("Error al obtener los productos");  
-    }
-}
-
-const getAllProductsPaginate=async(req,res)=>{
+  getAllProducts = async (req, res) => {
     try {
-        const user=req.session.user;
-        const { page = 1, limit=10 , campo, valor, sort }=req.query;
-    
-        const filter = campo ? { [campo]: valor } : {};
-        let vsort = sort === 'ASC' ? 1 : -1;
-        const options= { page: parseInt(page), limit: parseInt(limit), sort: { price: vsort }, lean: true};
-        
-        const {
-            docs,
-            totalDocs,
-            limit: limitPag,
-            totalPages,
-            hasPrevPage,
-            hasNextPage,
-            nextPage,
-            prevPage
-          }=await productService.getAllProductsPaginate(filter,options);
-
-          res.render('products', {
-            user: user,
-            products: docs,
-            page: parseInt(page),
-            hasPrevPage: hasPrevPage,
-            hasNextPage: hasNextPage,
-            nextPage: nextPage,
-            prevPage: prevPage,
-            prevLink: hasPrevPage ? `/products?page=${prevPage}` : null,
-            nextLink: hasNextPage ? `/products?page=${nextPage}` : null,
-        });  
-    
+      const products = await this.productService.getAllProducts(req, res);
+      return res.json({ message: `getAllProducts`, products });
     } catch (error) {
-        console.log("🚀 ~ getAllProductsPaginate ~ error:", error)  
+      console.log(
+        "🚀 ~ file: product.controller.js:11 ~ ProductCtrl ~ getAllProducts= ~ error:",
+        error
+      );
+
+      return res.status(500).json({ message: error.message });
     }
-};
+  };
 
-const getProductsByCategoria=async(req,res)=>{
-    try{
-        const { campo, valor, sort,page = 1, limit = 10 }=req.query;
-        
-        const filter = campo ? { [campo]: valor } : {};
-      
-        let vsort = sort === 'ASC' ? 1 : -1;
-    
-        const options = {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          sort: { price: vsort },
-        };
-    
-        const {
-          docs,
-          totalDocs,
-          limit: limitPag,
-          totalPages,
-          hasPrevPage,
-          hasNextPage,
-          nextPage,
-          prevPage
-        }= await productService.getAllProductsPaginate(filter,{ options, lean:true });
+  getProductById = async (req, res) => {
+    try {
+      const product = await this.productService.getProductById(req, res);
+      return res.json({ message: `method getUserById`, product });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  };
 
-        res.render('productsCate', {
-          products: docs,
-          page: page,
-          hasPrevPage: hasPrevPage,
-          hasNextPage: hasNextPage,
-          nextPage: nextPage,
-          prevPage: prevPage,
-          prevLink: hasPrevPage ? `/products/cate?page=${prevPage}` : null,
-          nextLink: hasNextPage ? `/products/cate?page=${nextPage}` : null,
+  deleteProductById = async (req, res) => {
+    try {
+      console.log("IN PRODUCT CONTROLLER****");
+      const product = await this.productService.deleteProductById(req, res);
+
+      if (!product) {
+        res.status(500).json({
+          message: `can not delete this product`,
         });
-  
-    }catch(error){
-        console.log(error);
-    }
-  
-};
-
-const getProductById=async(req,res)=>{
-    try{
-        const xvar=(req.params.pid).trim();
-        
-        const productId =(new ObjectId(xvar.toString()));
-        if(ObjectId.isValid(productId)){
-          const doc=await productService.getProductById({_id: productId});
-          return res.render('productDetail', doc);
-        }else{
-          console.log('no es un objectId de mongoose')
-        }
-    
-      }catch(error){
-          console.log(error);
       }
-    
-};
 
-module.exports={
-    getAllProducts,
-    getAllProductsView,
-    getAllProductsPaginate,
-    getProductsByCategoria,
-    getProductById,
+      return res.json({
+        message: `method deleteUserById`,
+        product,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  };
+
+  createProduct = async (req, res) => {
+    try {
+      console.log("BODY!!", req.body);
+      const productDto = new ProductDTO(req.body);
+
+      // TODO: si el deteo tiene algun error lanzar su error 400 o BAD REQUEST
+
+      const product = await this.productService.createProduct(productDto);
+
+      return res.json({
+        message: `product created`,
+        product,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  };
 }

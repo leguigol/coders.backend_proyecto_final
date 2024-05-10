@@ -1,10 +1,18 @@
-const passport=require('passport');
-const GithubStrategy=require('passport-github2');
-const local=require('passport-local');
-const userModel=require('../dao/model/user.model');
-const { createHash,isValidPasswd } = require('../utils/encrypt');
-const jwt = require("passport-jwt");
-const { SECRET_JWT } = require("../utils/jwt");
+// const passport=require('passport');
+// const GithubStrategy=require('passport-github2');
+// const local=require('passport-local');
+// const userModel=require('../dao/model/user.model');
+// const { createHash,isValidPasswd } = require('../utils/encrypt');
+// const jwt = require("passport-jwt");
+// const { SECRET_JWT } = require("../utils/jwt");
+
+import passport from 'passport';
+import GithubStrategy from 'passport-github2';
+import local from 'passport-local';
+import userModel from '../model/user.model.js';
+import { createHash,isValidPasswd } from '../utils/encrypt.js';
+import jwt from 'passport-jwt';
+import { SECRET_JWT } from '../utils/jwt.js';
 
 const localStrategy=local.Strategy
 const JWTStrategy = jwt.Strategy;
@@ -22,7 +30,7 @@ const cookieExtractor = function(req) {
     return token;
 };
 
-const initializePassport=()=>{
+export const initializePassport=()=>{
 
     passport.use(
         'github', 
@@ -185,4 +193,5 @@ const initializePassport=()=>{
     });
 }
 
-module.exports=initializePassport;
+export default initializePassport;
+// module.exports=initializePassport;
